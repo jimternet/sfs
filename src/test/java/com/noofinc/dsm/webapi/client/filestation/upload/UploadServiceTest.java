@@ -28,41 +28,33 @@ public class UploadServiceTest extends AbstractTest {
 
     @Test
     public void testFtpUpload() {
-        String fileName = "uploadTestFile.txt";
-        try {
-            File f = new File(getShareMountPoint() + "/" + fileName);
-            FileUtils.forceDelete(f);
-        } catch (IOException e) {
-            int i = 1;
-        }
-        uploadService.uploadFtpFile("//noofinc-ws-it/", fileName, "Upload test1 file contents".getBytes());
+        String fileName = "uploadTestFileFtp.txt";
+        uploadService.uploadFtpFile("//noofinc-ws-it/", fileName, "Upload testFtpUpload file contents".getBytes());
 
-        try {
-            Thread.sleep(2000L);
-        } catch (InterruptedException e) {
 
-        }
         File f = new File(getShareMountPoint() + "/" + fileName);
+        int seconds = 0;
+        //check for existence up to 10 sec
+        while (!f.exists()  && seconds < 10) {
+            try { Thread.sleep(1000L); } catch (InterruptedException e) { }
+            seconds = seconds++;
+        }
         assert f.exists() && !f.isDirectory();
     }
 
     @Test
     public void testUploadFileWithFtpFailOver() {
-        String fileName = "uploadTestFile.txt";
-        try {
-            File f = new File(getShareMountPoint() + "/" + fileName);
-            FileUtils.forceDelete(f);
-        } catch (IOException e) {
-            int i = 1;
-        }
-        uploadService.uploadFileWithFtpFailOver("//noofinc-ws-it/", fileName, "Upload test1 file contents".getBytes());
+        String fileName = "uploadTestFileFtpFailover.txt";
+        uploadService.uploadFileWithFtpFailOver("//noofinc-ws-it/", fileName, "Upload testUploadFileWithFtpFailOver file contents".getBytes());
 
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException e) {
 
-        }
         File f = new File(getShareMountPoint() + "/" + fileName);
+        int seconds = 0;
+        //check for existence up to 10 sec
+        while (!f.exists()  && seconds < 10) {
+            try { Thread.sleep(1000L); } catch (InterruptedException e) { }
+            seconds = seconds++;
+        }
         assert f.exists() && !f.isDirectory();
     }
 }

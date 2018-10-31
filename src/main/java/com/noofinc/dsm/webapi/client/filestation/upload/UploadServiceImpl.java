@@ -9,10 +9,8 @@ import com.noofinc.dsm.webapi.client.core.DsmUrlProvider;
 import com.noofinc.dsm.webapi.client.core.exception.DsmWebApiClientException;
 import com.noofinc.dsm.webapi.client.filestation.common.OverwriteBehavior;
 import com.noofinc.dsm.webapi.client.core.timezone.TimeZoneUtil;
-//import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
@@ -23,6 +21,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,8 +62,32 @@ public class UploadServiceImpl extends AbstractDsmServiceImpl implements UploadS
     @Autowired
     private ObjectMapper objectMapper;
 
+    FTPClient ftp = new FTPClient();
+
     public UploadServiceImpl() {
         super(API_ID);
+    }
+
+    @PostConstruct
+    public void initUploadService() {
+        try {
+            ftp.connect(this.host);
+            ftp.login(this.username, this.password);
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            ftp.enterLocalPassiveMode();
+        } catch (IOException e) {
+            LOGGER.warn("Could not connect to ftp server.", e);
+        }
+    }
+
+    @PreDestroy
+    public void destroy() {
+        try {
+            ftp.logout();
+            ftp.disconnect();
+        } catch (IOException ioe) {
+            //try to disconnect but eat it if fail
+        }
     }
 
     @Override
@@ -88,21 +112,10 @@ public class UploadServiceImpl extends AbstractDsmServiceImpl implements UploadS
 
     @Override
     public void uploadFtpFile(String parentPath, String name, byte[] content) {
-        FTPClient ftp = new FTPClient();
-
         try {
-            ftp.connect(this.host);
-            ftp.login(this.username, this.password);
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
-            ftp.enterLocalPassiveMode();
             InputStream is = new ByteArrayInputStream(content);
             ftp.storeFile(parentPath + name, is);
-            try {
-                ftp.logout();
-                ftp.disconnect();
-            } catch (IOException ioe) {
-                //eat it
-            }
+
         } catch (IOException e) {
             throw new DsmWebApiClientException("Unable to upload file via FTP", e);
         }
