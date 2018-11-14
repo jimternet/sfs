@@ -9,6 +9,7 @@ import com.noofinc.dsm.webapi.client.core.DsmWebapiResponse;
 import com.noofinc.dsm.webapi.client.filestation.common.PaginationAndSorting;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -20,11 +21,13 @@ public class BackgroundTaskServiceImpl extends AbstractDsmServiceImpl implements
 
     // Methods
     private static final String METHOD_LIST = "list";
+    private static final String METHOD_CLEAR_FINISHED = "clear_finished";
 
     // Parameters
     private static final String PARAMETER_OFFSET = "offset";
     private static final String PARAMETER_LIMIT = "limit";
     private static final String PARAMETER_API_FILTER = "api_filter";
+    private static final String PARAMETER_TASKID = "taskid";
 
     public BackgroundTaskServiceImpl() { super(API_ID); }
 
@@ -46,6 +49,40 @@ public class BackgroundTaskServiceImpl extends AbstractDsmServiceImpl implements
         BackgroundTaskListResponse response = getDsmWebapiClient().call(request, BackgroundTaskListResponse.class);
         return response.getData();
 
+    }
+
+    @Override
+    public void clear(List<String> taskIds) {
+        DsmWebapiRequest request = new DsmWebapiRequest(getApiId(), API_VERSION, getApiInfo().getPath(), METHOD_CLEAR_FINISHED);
+        if (taskIds != null && taskIds.size() > 0) {
+            request.parameter(PARAMETER_TASKID, getBracketedQuotedDelimmited(taskIds));
+        }
+        getDsmWebapiClient().call(request, DsmWebapiResponse.class);
+
+
+    }
+
+    private String getBracketedQuotedDelimmited(List<String> list) {
+        StringBuilder result = new StringBuilder();
+        result.append("[");
+        for (String item: list) {
+            //escaped comma delimmited
+            if (result.length() > 1) {
+               result.append(",");
+            }
+            //enquoted
+            result.append("\"").append(item).append("\"");
+        }
+        result.append("]");
+        System.out.println("getBracketedQuotedDelimmited");
+        System.out.println(result);
+        return result.toString();
+    }
+
+    @Override
+    public void clear() {
+        DsmWebapiRequest request = new DsmWebapiRequest(getApiId(), API_VERSION, getApiInfo().getPath(), METHOD_CLEAR_FINISHED);
+        getDsmWebapiClient().call(request, DsmWebapiResponse.class);
     }
 
     private static class BackgroundTaskListResponse extends DsmWebapiResponse<BackgroundTask.TaskList> {
