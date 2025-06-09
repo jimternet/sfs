@@ -48,6 +48,7 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-core:1.4.11'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'org.springframework:spring-test:6.0.13'
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.10.0'
 }
