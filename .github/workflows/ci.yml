@@ -21,8 +21,10 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew || true
+    - name: Setup Gradle
+      run: |
+        chmod +x ./gradlew
+        ./gradlew wrapper
       
     - name: Cache Gradle packages
       uses: actions/cache@v3
