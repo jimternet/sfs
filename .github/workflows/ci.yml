@@ -15,11 +15,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
-        distribution: 'temurin'
+        java-version: '17'
+        distribution: 'zulu'
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew || true
@@ -61,11 +61,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
-        distribution: 'temurin'
+        java-version: '17'
+        distribution: 'zulu'
         
     # OWASP Dependency Check
     - name: Run OWASP Dependency Check
@@ -111,7 +111,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '11'
-        distribution: 'temurin'
+        distribution: 'zulu'
         
     - name: Build project for CodeQL
       run: ./gradlew build -x test || gradle build -x test
@@ -133,7 +133,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '11'
-        distribution: 'temurin'
+        distribution: 'zulu'
         
     - name: Run SpotBugs
       run: |
