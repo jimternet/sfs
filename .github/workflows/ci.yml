@@ -21,10 +21,9 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
         
-    - name: Setup Gradle
+    - name: Setup Gradle Wrapper
       run: |
-        chmod +x ./gradlew
-        ./gradlew wrapper
+        gradle wrapper || echo "Gradle wrapper generation failed, continuing with build"
       
     - name: Cache Gradle packages
       uses: actions/cache@v3
