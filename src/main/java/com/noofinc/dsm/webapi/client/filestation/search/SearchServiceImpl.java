@@ -5,7 +5,7 @@ import com.noofinc.dsm.webapi.client.core.DsmWebapiResponse;
 import com.noofinc.dsm.webapi.client.filestation.common.File;
 import com.noofinc.dsm.webapi.client.filestation.common.PaginationAndSorting;
 import com.google.common.base.Joiner;
-import com.jayway.awaitility.core.ConditionTimeoutException;
+import org.awaitility.core.ConditionTimeoutException;
 import com.noofinc.dsm.webapi.client.core.AbstractDsmServiceImpl;
 import com.noofinc.dsm.webapi.client.core.DsmWebApiResponseError;
 import com.noofinc.dsm.webapi.client.core.DsmWebapiRequest;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import static com.jayway.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.await;
 
 @Component
 public class SearchServiceImpl extends AbstractDsmServiceImpl implements SearchService {

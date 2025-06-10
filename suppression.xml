@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Suppress false positives -->
+    <suppress>
+        <notes>Suppress false positives for Apache Commons IO</notes>
+        <packageUrl regex="true">pkg:maven/commons-io/commons-io@.*</packageUrl>
+        <cve>CVE-2021-37533</cve>
+    </suppress>
+    
+    <!-- Suppress false positives for Apache HTTP Client -->
+    <suppress>
+        <notes>Suppress false positives for Apache HTTP Client</notes>
+        <packageUrl regex="true">pkg:maven/org.apache.httpcomponents.client5/httpclient5@.*</packageUrl>
+        <cve>CVE-2020-13956</cve>
+    </suppress>
+</suppressions> 

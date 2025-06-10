@@ -11,9 +11,13 @@ import com.noofinc.dsm.webapi.client.filestation.common.OverwriteBehavior;
 import com.noofinc.dsm.webapi.client.core.timezone.TimeZoneUtil;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.http.client.fluent.Content;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Could not succeed to implement this with RestTemplate
@@ -136,13 +141,18 @@ public class UploadServiceImpl extends AbstractDsmServiceImpl implements UploadS
             String request = createRequest(uploadRequest);
             LOGGER.debug("Upload Request Body: \n{}", request);
 
-            Response response = Request.Post(createUrl())
-                    .addHeader("Content-type", String.format("multipart/form-data, boundary=%s", DELIMITER.substring(2)))
-                    .bodyByteArray(request.getBytes())
-                    .execute();
-                Content content = response.returnContent();
-                LOGGER.debug("Response body: {}", content.asString());
-                return objectMapper.readValue(content.asBytes(), DsmWebapiResponse.class);
+            HttpClient httpClient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(createUrl());
+            httpPost.addHeader("Content-type", String.format("multipart/form-data, boundary=%s", DELIMITER.substring(2)));
+            httpPost.setEntity(new ByteArrayEntity(request.getBytes(StandardCharsets.UTF_8), ContentType.APPLICATION_OCTET_STREAM));
+
+            try (ClassicHttpResponse response = (ClassicHttpResponse) httpClient.execute(httpPost)) {
+                HttpEntity entity = response.getEntity();
+                byte[] responseBytes = entity != null ? entity.getContent().readAllBytes() : new byte[0];
+                String responseBody = new String(responseBytes, StandardCharsets.UTF_8);
+                LOGGER.debug("Response body: {}", responseBody);
+                return objectMapper.readValue(responseBytes, DsmWebapiResponse.class);
+            }
         } catch (IOException e) {
             throw new DsmWebApiClientException("Could not upload file.", e);
         }
