@@ -94,10 +94,10 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'zulu'
         
     - name: Build project for CodeQL
@@ -116,10 +116,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'zulu'
         
     - name: Run SpotBugs
