@@ -52,17 +52,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'zulu'
-        
     # OWASP Dependency Check
     - name: Run OWASP Dependency Check
       uses: dependency-check/Dependency-Check_Action@main
-      env:
-        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
       with:
         project: 'sfs'
         path: '.'
@@ -72,8 +64,6 @@ jobs:
           --enableExperimental
           --noupdate
           --suppression suppression.xml
-        mount: |
-          /opt/hostedtoolcache/Java_Zulu_jdk/17.0.15-6/x64:/usr/lib/jvm/java-17-openjdk-amd64
         
     - name: Upload OWASP Dependency Check results
       uses: actions/upload-artifact@v4
