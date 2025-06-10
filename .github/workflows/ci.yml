@@ -58,7 +58,7 @@ jobs:
       with:
         project: 'sfs'
         path: '.'
-        format: 'HTML,JSON'
+        format: 'ALL'
         args: >
           --enableRetired
           --enableExperimental
